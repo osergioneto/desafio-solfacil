@@ -26,7 +26,10 @@ def create_partner(partner: schemas.Partner, db: Session = Depends(get_db)):
         raise HTTPException(status_code=409, detail="Partner already registered")
     return crud_partner.create_partner(db=db, partner=partner)
 
-@router.post("/bulk-partners/", response_model=list[schemas.Partner])
+@router.post("/bulk-partners/", response_model=list[schemas.Partner] | None)
 def create_partners(file: Annotated[bytes, File()], db: Session = Depends(get_db)):
-    partners = partner.from_csv(file, db)
-    return partners
+    parterns_or_file = partner.upsert_from_csv(file, db)
+    if isinstance(parterns_or_file, list):
+        return parterns_or_file
+    
+    return FileResponse(parterns_or_file)
