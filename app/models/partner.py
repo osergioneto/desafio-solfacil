@@ -1,11 +1,11 @@
-from sqlalchemy import Column, DateTime, UUID, String
+from sqlalchemy import Column, DateTime, String, Integer
 from sqlalchemy.sql import func
-from ..crud.db.base import Base
+from app.crud.db.session import Base
 
 class Partner(Base):
     __tablename__ = "partners"
 
-    id = Column(UUID, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, index=True)
     cnpj = Column(String, index=True, unique=True)
     company_name = Column(String)
     trading_name = Column(String)
