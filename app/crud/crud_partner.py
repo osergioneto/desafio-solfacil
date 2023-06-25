@@ -19,8 +19,6 @@ def create_partner(db: Session, partner: schemas.PartnerCreate):
     return db_partner
 
 def update_partner(db: Session, db_obj: schemas.PartnerInDB, obj_in: schemas.PartnerUpdate | Dict[str, Any]):
-    print(db_obj.__dict__)
-
     obj_data = jsonable_encoder(db_obj)
     if isinstance(obj_in, dict):
         update_data = obj_in
