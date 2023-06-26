@@ -3,7 +3,6 @@ from sqlalchemy import text
 from tenacity import after_log, before_log, retry, stop_after_attempt, wait_fixed
 
 from app.tests.crud.db import session, init_db
-# from app.tests.crud.db import i
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,3 +37,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    
