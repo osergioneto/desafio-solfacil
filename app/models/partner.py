@@ -12,6 +12,8 @@ class Partner(Base):
     telephone = Column(String)
     email = Column(String, unique=True)
     zip_code = Column(String)
+    state = Column(String, nullable=True)
+    city = Column(String, nullable=True)
     
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=None)

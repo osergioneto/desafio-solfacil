@@ -10,6 +10,8 @@ class BasePartner(BaseModel):
     trading_name: str
     telephone: str
     zip_code: str
+    state: str = None
+    city: str = None
 
 class PartnerCreate(BasePartner):
     pass
