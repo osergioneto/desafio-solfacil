@@ -1,8 +1,10 @@
-import copy, csv, re
+import copy, csv, re, httpx, time
 from sqlalchemy.orm import Session
 from app.crud import crud_partner
 from datetime import datetime
 from app.schemas import BasePartner
+import brazilcep
+
 
 def upsert_from_csv(file: bytes, db: Session): 
     csv_data = file.decode('utf-8') 
@@ -45,7 +47,7 @@ def validate_csv(csv_data: str):
             if fieldname == "Telefone" and value and not validate_telefone(value):
                 errors.append(f"Invalid telefone: {value}")
 
-            if fieldname == "CEP" and value and not validate_cep(value):
+            if fieldname == " CEP" and value and not validate_cep(value):
                 errors.append(f"Invalid CEP: {value}")
 
             if fieldname == "Email" and value and not validate_email(value):
