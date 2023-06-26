@@ -13,16 +13,16 @@ def upsert_from_csv(file: bytes, db: Session):
         write_errors(validated_csv["rows"], file_path)
 
         return file_path
-        
 
     partners = []
     for row in csv.DictReader(csv_data.splitlines()):
-        partner_obj = format_partner(row)
+        state_and_city = get_state_and_city(row[' CEP'])
+        partner_obj = format_partner(row, state_and_city)
         partner = crud_partner.find_partner_by_cnpj_or_email(db, cnpj=partner_obj.cnpj, email=partner_obj.email)
         if partner:
             partner = crud_partner.update_partner(db, db_obj=partner, obj_in={**partner_obj.dict(),"updated_at": datetime.now()})
         else:
-            partner = crud_partner.create_partner(db, partner={partner_obj})
+            partner = crud_partner.create_partner(db, partner=partner_obj)
         partners.append(partner)
 
     return partners
@@ -87,7 +87,7 @@ def validate_email(email):
     pattern = r"[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+"
     return re.fullmatch(pattern, email) is not None
 
-def format_partner(row: list[str]):
+def format_partner(row: list[str], state_and_city: dict):
     cnpj = row['CNPJ']
     company_name = row['Razão Social']
     trading_name = row['Nome Fantasia']
@@ -101,5 +101,14 @@ def format_partner(row: list[str]):
         company_name = company_name,
         trading_name = trading_name, 
         telephone = telephone, 
-        zip_code = zip_code
+        zip_code = zip_code,
+        city=state_and_city["city"],
+        state=state_and_city["state"]
     )
+
+def get_state_and_city(cep: str):
+    try:
+        address_obj = brazilcep.get_address_from_cep(cep)
+        return {"city": address_obj["city"], "state": address_obj["uf"]}
+    except:
+        return {"city": None, "state": None}
