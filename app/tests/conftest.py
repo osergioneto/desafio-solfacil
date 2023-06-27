@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from app.tests.crud.db.session import TestingSessionLocal
-from app.main import app
+from ..main import app
 
 @pytest.fixture(scope="session")
 def db() -> Generator:
