@@ -1,7 +1,6 @@
 from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
-from app.crud import crud_partner
 from faker import Faker
 
 fake = Faker(['pt-BR', 'en-US'])
@@ -18,4 +17,4 @@ def create_random_partner(db: Session):
         city=fake.city(),
         state=fake.estado_sigla()
     )
-    return crud_partner.create_partner(db, partner=partner)
+    return crud.partner.create_partner(db, partner=partner)

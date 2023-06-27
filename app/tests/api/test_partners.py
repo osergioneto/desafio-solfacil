@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 from app.main import app
-from app import models
 
 from app.tests.utils.partner import create_random_partner
 from app.tests.utils.db import clean

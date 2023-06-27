@@ -1,8 +1,7 @@
-import copy, csv, re, httpx, time
-from sqlalchemy.orm import Session
-from app.crud import crud_partner
+import csv, re
 from datetime import datetime
-from app.schemas import BasePartner
+from sqlalchemy.orm import Session
+from app import crud, schemas, utils
 import brazilcep
 
 
@@ -20,11 +19,11 @@ def upsert_from_csv(file: bytes, db: Session):
     for row in csv.DictReader(csv_data.splitlines()):
         state_and_city = get_state_and_city(row[' CEP'])
         partner_obj = format_partner(row, state_and_city)
-        partner = crud_partner.find_partner_by_cnpj_or_email(db, cnpj=partner_obj.cnpj, email=partner_obj.email)
+        partner = crud.partner.find_partner_by_cnpj_or_email(db, cnpj=partner_obj.cnpj, email=partner_obj.email)
         if partner:
-            partner = crud_partner.update_partner(db, db_obj=partner, obj_in={**partner_obj.dict(),"updated_at": datetime.now()})
+            partner = crud.partner.update_partner(db, db_obj=partner, obj_in={**partner_obj.dict(),"updated_at": datetime.now()})
         else:
-            partner = crud_partner.create_partner(db, partner=partner_obj)
+            partner = crud.partner.create_partner(db, partner=partner_obj)
         partners.add(partner)
 
     return list(partners)
