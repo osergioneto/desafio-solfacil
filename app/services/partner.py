@@ -1,11 +1,12 @@
 import csv, re
 from datetime import datetime
+
+from fastapi import BackgroundTasks
 from sqlalchemy.orm import Session
 from app import crud, schemas, utils
 import brazilcep
 
-
-def upsert_from_csv(file: bytes, db: Session): 
+def upsert_from_csv(file: bytes, db: Session, bg_task: BackgroundTasks):
     csv_data = file.decode('utf-8') 
 
     validated_csv = validate_csv(csv_data)
@@ -24,6 +25,8 @@ def upsert_from_csv(file: bytes, db: Session):
             partner = crud.partner.update_partner(db, db_obj=partner, obj_in={**partner_obj.dict(),"updated_at": datetime.now()})
         else:
             partner = crud.partner.create_partner(db, partner=partner_obj)
+            bg_task.add_task(utils.send_email, partner.trading_name)
+
         partners.add(partner)
 
     return list(partners)
@@ -96,7 +99,7 @@ def format_partner(row: list[str], state_and_city: dict):
     email = row['Email']
     zip_code = row[' CEP']
 
-    return BasePartner(
+    return schemas.BasePartner(
         cnpj = cnpj, 
         email = email, 
         company_name = company_name,
