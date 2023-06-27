@@ -16,7 +16,7 @@ def upsert_from_csv(file: bytes, db: Session):
 
         return file_path
 
-    partners = []
+    partners = set()
     for row in csv.DictReader(csv_data.splitlines()):
         state_and_city = get_state_and_city(row[' CEP'])
         partner_obj = format_partner(row, state_and_city)
@@ -25,9 +25,9 @@ def upsert_from_csv(file: bytes, db: Session):
             partner = crud_partner.update_partner(db, db_obj=partner, obj_in={**partner_obj.dict(),"updated_at": datetime.now()})
         else:
             partner = crud_partner.create_partner(db, partner=partner_obj)
-        partners.append(partner)
+        partners.add(partner)
 
-    return partners
+    return list(partners)
 
 def validate_csv(csv_data: str):
     reader = csv.DictReader(csv_data.splitlines()) 
