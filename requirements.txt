@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+email-validator
+python-multipart
+sqlalchemy
+tenacity
+brazilcep
+faker
+pytest-cov
+pytest
