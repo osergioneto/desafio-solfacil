@@ -41,13 +41,14 @@ def test_create_partners_with_file_without_errors(client: TestClient, db: Sessio
 
     response = client.post("/bulk-partners", files={"file": file_str})
     content = response.json()
+    sorted_content = sorted(content, key=lambda x: x['id'])
 
     assert response.status_code == 200
     assert len(content) == 4
-    assert content[0]["cnpj"] == "12.473.742/0001-13"
-    assert content[1]["cnpj"] == "19.478.819/0001-97"
-    assert content[2]["cnpj"] == "19.478.812/0001-90"
-    assert content[3]["cnpj"] == "16.470.954/0001-06"
+    assert sorted_content[0]["cnpj"] == "12.473.742/0001-13"
+    assert sorted_content[1]["cnpj"] == "19.478.819/0001-97"
+    assert sorted_content[2]["cnpj"] == "19.478.812/0001-90"
+    assert sorted_content[3]["cnpj"] == "16.470.954/0001-06"
 
 def test_create_partners_with_error(client: TestClient, db: Session):
     clean(db)
@@ -56,3 +57,4 @@ def test_create_partners_with_error(client: TestClient, db: Session):
     response = client.post("/bulk-partners", files={"file": file_str})
 
     assert response.status_code == 400
+    

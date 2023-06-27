@@ -8,10 +8,11 @@ def test_create_from_function_upsert_from_csv(client: TestClient, db: Session):
     
     file_str = "CNPJ,Razão Social,Nome Fantasia,Telefone,Email, CEP\n12.473.742/0001-13,Sol Forte,Sol Forte LTDA,(11) 98207-9903,atendimento@solforte.com,04127-000\n19.478.819/0001-97,Sol da Manhã,Sol da Manhã LTDA,(21) 98207-9902,atendimento@soldamanha.com,04127-000"
     partners = partner.upsert_from_csv(file_str.encode(), db=db)
+    sorted_partners = sorted(partners, key=lambda x: x.id)
 
     assert len(partners) == 2
-    assert partners[0].cnpj == "12.473.742/0001-13"
-    assert partners[1].cnpj == "19.478.819/0001-97"
+    assert sorted_partners[0].cnpj == "12.473.742/0001-13"
+    assert sorted_partners[1].cnpj == "19.478.819/0001-97"
 
 def test_update_from_function_upsert_from_csv(client: TestClient, db: Session):
     clean(db)
