@@ -1,3 +1,4 @@
+import os
 from fastapi import APIRouter, Depends, File, HTTPException
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -9,7 +10,7 @@ from app.crud.db.session import Base
 from app.api.deps import get_db
 from ..main import app
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./db/partners_test.db"
+SQLALCHEMY_DATABASE_URL = os.getenv("SQLALCHEMY_DATABASE_TEST_URL", "sqlite:///./db/partners_test.db")
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}, poolclass=StaticPool)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

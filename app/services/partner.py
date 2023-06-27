@@ -1,4 +1,4 @@
-import csv, re
+import csv, io, re, os
 from datetime import datetime
 
 from fastapi import BackgroundTasks
@@ -11,7 +11,7 @@ def upsert_from_csv(file: bytes, db: Session, bg_task: BackgroundTasks):
 
     validated_csv = validate_csv(csv_data)
     if validated_csv["errors"]:
-        file_path = '../assets/output.csv'
+        file_path = os.getenv("OUTPUT_FILE","/app/assets/output.csv")
         write_errors(validated_csv["rows"], file_path)
 
         return file_path
@@ -70,6 +70,19 @@ def write_errors(data, file_path):
         csv_writer.writeheader()
 
         return csv_writer.writerows(data)
+    
+# def write_errors(data):
+#     fieldnames = data[0].keys()
+
+#     output = io.StringIO()
+#     csv_writer = csv.DictWriter(output, fieldnames=fieldnames)
+#     csv_writer.writeheader()
+#     csv_writer.writerows(data)
+
+#     csv_string = output.getvalue()
+#     output.close()
+
+#     return csv_string
 
 def validate_cnpj(cnpj):
     # CNPJ pattern: xx.xxx.xxx/xxxx-xx
